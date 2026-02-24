@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -50,20 +51,36 @@ public class WebServerSocket {
                     
                     System.out.println("Requisição Recebida: ");
                     System.out.println(requestBuilder);
+
+                    /// Processamentos
               
                     OutputStream outputStream = socket.getOutputStream();
                     
                     PrintStream printStream = new PrintStream(outputStream);
                     
+                    StringBuilder bodyResponse = new StringBuilder("{");
+                    bodyResponse.append("\"status\": \"OK\",\n");
+                    bodyResponse.append("\"message\": \"Servidor funcionando!\",\n");
+                    bodyResponse.append("\"produtos\": [\n");
+
+                    produtos.stream().forEach(produto -> {
+                        bodyResponse.append("{\n");
+                        bodyResponse.append("\"codigo\": "+produto.getCodigo()+",\n");
+                        bodyResponse.append("\"descricao\": "+produto.getDescricao()+",\n");
+                        bodyResponse.append("\"preco\": "+produto.getPreco()+"\n");
+                        bodyResponse.append("}\n");
+                    });
+
+                    bodyResponse.append("]\n");
+                    bodyResponse.append("}");
+                    
                     printStream.println("HTTP/1.1 200 OK");
                     printStream.println("Content-Type: application/json");
+                    printStream.println("Content-Lenght: "+bodyResponse.toString()
+                                                            .getBytes(StandardCharsets.UTF_8)
+                                                               .length);
                     printStream.println("");
-                    printStream.println("""
-                                        { 
-                                            "status": "OK", 
-                                            "message": "Servidor funcionando!"
-                                        }
-                                        """);
+                    printStream.println(bodyResponse);
                             
                     
                     
