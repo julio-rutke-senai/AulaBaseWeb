@@ -1,4 +1,4 @@
-package aulabaseweb;
+package aulabaseweb.model;
 
 public class Produto {
     private int codigo;
@@ -9,6 +9,10 @@ public class Produto {
         this.codigo = codigo;
         this.descricao = descricao;
         this.preco = preco;
+    }
+
+    public Produto(){
+
     }
     
     
